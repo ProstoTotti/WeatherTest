@@ -11,6 +11,7 @@ import RealmSwift
 import OpenWeatherSwift
 
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     @IBOutlet weak var weatherStackView: UIStackView!
     @IBOutlet weak var startStackView: UIStackView!
@@ -36,6 +37,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         tableView.delegate = self
         tableView.dataSource = self
         getCitiesToTable()
+        activityIndicator.hidesWhenStopped = true
         startStackView.isHidden = false
         weatherStackView.isHidden = true
         // Do any additional setup after loading the view, typically from a nib.
@@ -65,10 +67,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             let path = Bundle.main.url(forResource: "cities", withExtension: "json")!
             let data = try! Data(contentsOf: path)
             let json = try! JSONSerialization.jsonObject(with: data, options: [])
-            guard  let jsonArray = json as? [[String: Any]] else {
-                print("Didn't get array of gists object as JSON from API")
-                return
-            }
+            let jsonArray = json as! [[String: Any]]
             self.cities = jsonArray.flatMap{ City(json: $0)}
     }
     
@@ -89,9 +88,11 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             startStackView.isHidden = true
             weatherStackView.isHidden = false
         }
+        activityIndicator.startAnimating()
         let currentCity = cities[indexPath.row].name!
         newApi.currentWeatherByCity(name: currentCity) { (result) in
             if let result = result {
+                print("request")
                 let weather = Weather(data: result)
                 try! self.realm.write {
                     if let weatherCity = self.realm.objects(WeatherData.self).filter("city = '\(currentCity)'").first {
@@ -106,6 +107,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                     }
                 }
             }
+            self.activityIndicator.stopAnimating()
             let data = self.realm.objects(WeatherData.self).filter("city = '\(currentCity)'")
             if let temp = data.first?.currentTemp {
                 self.tempLabel.text = temp + "°"
