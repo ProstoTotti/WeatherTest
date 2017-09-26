@@ -57,23 +57,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
     }
     
-    func getWeatherCity(city name: String){
-        newApi.currentWeatherByCity(name: name) { (result) in
-            let weather = Weather(data: result)
-            try! self.realm.write {
-                if let weatherCity = self.realm.objects(WeatherData.self).filter("city = '\(name)'").first {
-                    weatherCity.setValue("\(weather.temperature)", forKey: "currentTemp")
-                    weatherCity.setValue("\(weather.condition)", forKey: "weatherDescription")
-                } else {
-                    let weatherCity = WeatherData()
-                    weatherCity.city = name
-                    weatherCity.currentTemp = String(weather.temperature)
-                    weatherCity.weatherDescription = weather.condition
-                    self.realm.add(weatherCity)
-                }
-            }
-        }
-    }
+//    func getWeatherCity(city name: String){
+//
+//    }
     
     func getCitiesToTable() {
             let path = Bundle.main.url(forResource: "cities", withExtension: "json")!
@@ -104,13 +90,34 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             weatherStackView.isHidden = false
         }
         let currentCity = cities[indexPath.row].name!
-        getWeatherCity(city: currentCity)
-        let data = realm.objects(WeatherData.self).filter("city = '\(currentCity)'")
-        tempLabel.text = "\(data.first!.currentTemp)°"
-        weatherLabel.text = data.first?.weatherDescription
-        cityLabel.text = data.first?.city
-        descriptionCityLabel.text = cities[indexPath.row].description
-        
+        newApi.currentWeatherByCity(name: currentCity) { (result) in
+            if let result = result {
+                let weather = Weather(data: result)
+                try! self.realm.write {
+                    if let weatherCity = self.realm.objects(WeatherData.self).filter("city = '\(currentCity)'").first {
+                        weatherCity.setValue("\(weather.temperature)", forKey: "currentTemp")
+                        weatherCity.setValue("\(weather.condition)", forKey: "weatherDescription")
+                    } else {
+                        let weatherCity = WeatherData()
+                        weatherCity.city = currentCity
+                        weatherCity.currentTemp = String(weather.temperature)
+                        weatherCity.weatherDescription = weather.condition
+                        self.realm.add(weatherCity)
+                    }
+                }
+            }
+            let data = self.realm.objects(WeatherData.self).filter("city = '\(currentCity)'")
+            if let temp = data.first?.currentTemp {
+                self.tempLabel.text = temp + "°"
+                self.weatherLabel.text = data.first?.weatherDescription
+                self.cityLabel.text = data.first?.city
+                self.descriptionCityLabel.text = self.cities[indexPath.row].description
+            } else {
+                let alert = UIAlertController(title: "Error", message: "Maybe WeatherAPI is down or you don't have an internet connection.", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                self.present(alert, animated: true, completion: nil)
+            }
+        }
     }
     
 }

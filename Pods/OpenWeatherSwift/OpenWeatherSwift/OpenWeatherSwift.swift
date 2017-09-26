@@ -42,7 +42,7 @@ public class OpenWeatherSwift {
     
     private let currentBase = "http://api.openweathermap.org/data/2.5/weather?"
     
-    private var params = [String : AnyObject]()
+    public var params = [String : AnyObject]()
     public var temperatureFormat: TemperatureUnit = .Kelvin {
         didSet {
             params["units"] = temperatureFormat.rawValue as AnyObject?
@@ -77,7 +77,7 @@ public class OpenWeatherSwift {
     }
     
     
-    func encode(params: [String: AnyObject]) -> String {
+   public func encode(params: [String: AnyObject]) -> String {
         var stringToAppend = String()
         
         for param in params {
@@ -101,7 +101,7 @@ public class OpenWeatherSwift {
         return UIImage()
     }
     
-    public func currentWeatherByCity(name: String, completionHandler: @escaping (_ result: JSON) -> ()) {
+    public func currentWeatherByCity(name: String, completionHandler: @escaping (_ result: JSON?) -> ()) {
         let apiURL = currentBase + "q=\(name)" + encode(params: params)
         
         Alamofire.request(apiURL).responseJSON { (response) in
@@ -110,7 +110,7 @@ public class OpenWeatherSwift {
                 
                 completionHandler(json)
             } else {
-                print("error")
+                completionHandler(nil)
             }
         }
     }
