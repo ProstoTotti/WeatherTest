@@ -1,0 +1,26 @@
+PODS:
+  - Alamofire (4.5.1)
+  - OpenWeatherSwift (1.0.1):
+    - Alamofire
+    - SwiftyJSON
+  - Realm (3.0.0-beta.4):
+    - Realm/Headers (= 3.0.0-beta.4)
+  - Realm/Headers (3.0.0-beta.4)
+  - RealmSwift (3.0.0-beta.4):
+    - Realm (= 3.0.0-beta.4)
+  - SwiftyJSON (3.1.4)
+
+DEPENDENCIES:
+  - OpenWeatherSwift (~> 1.0)
+  - RealmSwift (= 3.0.0-beta.4)
+
+SPEC CHECKSUMS:
+  Alamofire: 2d95912bf4c34f164fdfc335872e8c312acaea4a
+  OpenWeatherSwift: 2bce687b07f7f663b30c1947176346508c5963a7
+  Realm: 61978a10127ec9a4638f0df4d48a08b5e1ded77e
+  RealmSwift: 6025cb29724f67a53bfd111808f8947337b5a673
+  SwiftyJSON: c2842d878f95482ffceec5709abc3d05680c0220
+
+PODFILE CHECKSUM: 583e99336c4f38874cfe65a9137900b5abce8eab
+
+COCOAPODS: 1.3.1

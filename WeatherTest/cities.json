@@ -1,0 +1,43 @@
+[
+  {
+    "city" : "Minsk",
+    "code" : "BY",
+    "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"
+  },
+  {
+    "city" : "Moscow",
+    "code" : "RU",
+    "description" : "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"
+  },
+  {
+    "city" : "Kiev",
+    "code" : "UA",
+    "description" : "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur"
+  },
+  {
+    "city" : "Warsaw",
+    "code" : "PL",
+    "description" : "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"
+  },
+  {
+    "city" : "Riga",
+    "code" : "LV",
+    "description" : "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua"
+  },
+  {
+    "city" : "Vilnius",
+    "code" : "LT",
+    "description" : "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat"
+  },
+  {
+    "city" : "Berlin",
+    "code" : "DE",
+    "description" : "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur"
+  },
+  {
+    "city" : "Paris",
+    "code" : "FR",
+    "description" : "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum"
+  }
+  
+  ]
