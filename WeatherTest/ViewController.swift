@@ -59,9 +59,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         }
     }
     
-//    func getWeatherCity(city name: String){
-//
-//    }
     
     func getCitiesToTable() {
             let path = Bundle.main.url(forResource: "cities", withExtension: "json")!
@@ -92,7 +89,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         let currentCity = cities[indexPath.row].name!
         newApi.currentWeatherByCity(name: currentCity) { (result) in
             if let result = result {
-                print("request")
                 let weather = Weather(data: result)
                 try! self.realm.write {
                     if let weatherCity = self.realm.objects(WeatherData.self).filter("city = '\(currentCity)'").first {
