@@ -9,8 +9,11 @@
 import UIKit
 import RealmSwift
 import OpenWeatherSwift
+import Alamofire
+import SwiftyJSON
 
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+    
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     @IBOutlet weak var weatherStackView: UIStackView!
@@ -22,7 +25,6 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     @IBOutlet weak var cityLabel: UILabel!
     @IBOutlet weak var descriptionCityLabel: UILabel!
     
-    var newApi = OpenWeatherSwift(apiKey: "eba47effea88b18d5b67eae531209447", temperatureFormat: .Celsius)
     let realm = try! Realm()
 
     @IBOutlet weak var heightConstraint: NSLayoutConstraint!
@@ -68,26 +70,28 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             self.cities = jsonArray.flatMap{ City(json: $0)}
     }
     
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return cities.count
+    func clearCache(){
+        let cache = URLCache.shared
+        cache.removeAllCachedResponses()
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        let city = cities[indexPath.row]
-        cell.textLabel?.text = city.name
-        cell.detailTextLabel?.text = city.code
-        return cell
-    }
-    
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if !startStackView.isHidden {
-            startStackView.isHidden = true
-            weatherStackView.isHidden = false
+    func currentWeatherByCity(name: String, completionHandler: @escaping (_ result: JSON?) -> ()) {
+        clearCache()
+        let manager = Alamofire.SessionManager.default
+        manager.session.configuration.timeoutIntervalForRequest = 3600
+        let apiURL = "http://api.openweathermap.org/data/2.5/weather?q=\(name)&appid=eba47effea88b18d5b67eae531209447&units=metric"
+        manager.request(apiURL).responseJSON { (response) in
+            if response.result.isSuccess {
+                let json = JSON(response.result.value as Any)
+                
+                completionHandler(json)
+            } else {
+                completionHandler(nil)
+            }
         }
-        activityIndicator.startAnimating()
-        let currentCity = cities[indexPath.row].name!
-        newApi.currentWeatherByCity(name: currentCity) { (result) in
+    }
+    func getWeatherData(city currentCity: String, indexPath: IndexPath) {
+        currentWeatherByCity(name: currentCity) { (result) in
             if let result = result {
                 let weather = Weather(data: result)
                 try! self.realm.write {
@@ -116,6 +120,28 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
                 self.present(alert, animated: true, completion: nil)
             }
         }
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return cities.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        let city = cities[indexPath.row]
+        cell.textLabel?.text = city.name
+        cell.detailTextLabel?.text = city.code
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if !startStackView.isHidden {
+            startStackView.isHidden = true
+            weatherStackView.isHidden = false
+        }
+        activityIndicator.startAnimating()
+        let currentCity = cities[indexPath.row].name!
+        getWeatherData(city: currentCity, indexPath: indexPath)
     }
     
 }

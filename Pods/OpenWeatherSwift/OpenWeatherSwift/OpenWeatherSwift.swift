@@ -103,7 +103,6 @@ public class OpenWeatherSwift {
     
     public func currentWeatherByCity(name: String, completionHandler: @escaping (_ result: JSON?) -> ()) {
         let apiURL = currentBase + "q=\(name)" + encode(params: params)
-        
         Alamofire.request(apiURL).responseJSON { (response) in
             if response.result.isSuccess {
                 let json = JSON(response.result.value as Any)
